@@ -13,14 +13,19 @@ class BooksViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
+    var firebaseManager = FirebaseManager()
+    
     let db = Firestore.firestore()
     var bookArray: [Book] = []
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
-        loadBooks()
+        firebaseManager.delegate = self
+        firebaseManager.loadBooks()
     }
+    
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let index = sender as? Int
         if segue.identifier == "goDetail" {
@@ -31,32 +36,6 @@ class BooksViewController: UIViewController {
     }
     
     
-    func loadBooks() {
-        db.collection(K.FStore.collectionName)
-            .order(by: K.FStore.bookField)
-            .addSnapshotListener { querySnapshot, error in
-                self.bookArray = []
-                if let e = error {
-                    print("Loading error Firestore \(e)")
-                }else {
-                    if let snapshotDocuments = querySnapshot?.documents{
-                        for doc in snapshotDocuments {
-                            let data = doc.data()
-                            if let sender = data[K.FStore.senderField] as? String, let bookName = data[K.FStore.bookField] as? String, let author = data[K.FStore.authorField] as? String {
-                                if sender == Auth.auth().currentUser?.email {
-                                    let newBook = Book(sender: sender, bookName: bookName, author: author)
-                                    self.bookArray.append(newBook)
-                                    DispatchQueue.main.async {
-                                        self.tableView.reloadData()
-                                    }
-                                    
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-    }
     @IBAction func addButtonTapped(_ sender: Any) {
         let alerController = UIAlertController(title: "Add Book", message: "", preferredStyle: .alert)
         alerController.addTextField { textField in
@@ -68,17 +47,13 @@ class BooksViewController: UIViewController {
             textField.placeholder = "Author"
         }
         let saveAction = UIAlertAction(title: "Save", style: .default) { action in
+            self.bookArray = []
             if let bookText = (alerController.textFields![0] as UITextField).text, let authorText = (alerController.textFields![1] as UITextField).text, let sender = Auth.auth().currentUser?.email  {
                 let bookName = bookText
                 let author = authorText
                 
-                self.db.collection(K.FStore.collectionName).addDocument(data: [K.FStore.senderField: sender,K.FStore.bookField: bookName,K.FStore.authorField: author]) { error in
-                    if let e = error {
-                        print("Error : Saving data to firestore  \(e)")
-                    }else {
-                        print("Book saved.")
-                    }
-                }
+                self.firebaseManager.saveBook(sender: sender, bookName: bookName, author: author)
+                
                 print(bookName)
                 print(author)
                 print(sender)
@@ -93,27 +68,60 @@ class BooksViewController: UIViewController {
     }
     
     @IBAction func logoutButtonTapped(_ sender: Any) {
-        do {
-            try Auth.auth().signOut()
-            navigationController?.popToRootViewController(animated: true)
-        } catch let signOutError as NSError {
-            print("Error signing out: %@", signOutError)
-        }
         
+        firebaseManager.logOut()
+        navigationController?.popToRootViewController(animated: true)
     }
 }
-//MARK: - TableView Datasource
+//MARK: - TableView Datasource & Delegate
 extension BooksViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return bookArray.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell",for: indexPath)
-        cell.textLabel?.text = bookArray[indexPath.row].bookName
+        cell.textLabel?.text = self.bookArray[indexPath.row].bookName
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "goDetail", sender: indexPath.row)
     }
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { contextualAction, view, boolValue  in
+            
+            let alertController = UIAlertController(title: "\(self.bookArray[indexPath.row].bookName) is Delete ?", message: "Are you sure", preferredStyle: .alert)
+            let yesAction = UIAlertAction(title: "YES", style: .default) { action in
+                let selectBook = self.bookArray[indexPath.row].idString
+                
+                self.bookArray = []
+                self.firebaseManager.deleteBook(selectBook: selectBook)
+                self.tableView.reloadData()
+                
+                
+                // self.tableView.reloadData()
+            }
+            let noAction = UIAlertAction(title: "No", style: .cancel) { action in
+                self.tableView.reloadData()
+            }
+            alertController.addAction(yesAction)
+            alertController.addAction(noAction)
+            self.present(alertController, animated: true)
+            
+        }
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+}
+
+//MARK: - FirebaseManger Protocol
+extension BooksViewController: FirebaseManagerProtocol {
+    func didUpdateBook(_ firebaseManager: FirebaseManager, newBook: Book) {
+        self.bookArray = []
+        DispatchQueue.main.async {
+            self.bookArray.append(newBook)
+            self.tableView.reloadData()
+        }
+    }
+    
+    
 }

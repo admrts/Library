@@ -18,7 +18,7 @@ class LoginViewController: UIViewController {
     }
     @IBAction func loginButton(_ sender: Any) {
         if let email = emailTextField.text, let password = passwordTextField.text {
-            Auth.auth().signIn(withEmail: email, password: password) { authResul, error in
+            Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
                 if let e = error {
                     let alertController = UIAlertController(title: "Email or Password is wrong", message: "Try Again!", preferredStyle: .alert)
                     let okButton = UIAlertAction(title: "OK", style: .default)

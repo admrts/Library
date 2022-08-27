@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0396CACC25D670A576CA0AD5 /* Pods_My_Library.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C8B3037BA31BE5D289CDA2A /* Pods_My_Library.framework */; };
+		4916FC4828BA2AE30088C325 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4916FC4728BA2AE30088C325 /* FirebaseManager.swift */; };
 		492A3A6228B8F2FA00B7829B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 492A3A6128B8F2FA00B7829B /* GoogleService-Info.plist */; };
 		492A3A6428B910C500B7829B /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492A3A6328B910C500B7829B /* Constant.swift */; };
 		492A3A6628B9642C00B7829B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492A3A6528B9642C00B7829B /* DetailViewController.swift */; };
@@ -25,6 +26,7 @@
 
 /* Begin PBXFileReference section */
 		429B9AA721CCD471DED55EE0 /* Pods-My_Library.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-My_Library.release.xcconfig"; path = "Target Support Files/Pods-My_Library/Pods-My_Library.release.xcconfig"; sourceTree = "<group>"; };
+		4916FC4728BA2AE30088C325 /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
 		492A3A6128B8F2FA00B7829B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		492A3A6328B910C500B7829B /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		492A3A6528B9642C00B7829B /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 			children = (
 				496EEB3428B81A0800A8E17B /* Book.swift */,
 				492A3A6328B910C500B7829B /* Constant.swift */,
+				4916FC4728BA2AE30088C325 /* FirebaseManager.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 			files = (
 				492A3A6628B9642C00B7829B /* DetailViewController.swift in Sources */,
 				496EEB1F28B7D36800A8E17B /* LoginViewController.swift in Sources */,
+				4916FC4828BA2AE30088C325 /* FirebaseManager.swift in Sources */,
 				496EEB2128B7D37D00A8E17B /* SignupViewController.swift in Sources */,
 				496EEB3528B81A0800A8E17B /* Book.swift in Sources */,
 				492A3A6428B910C500B7829B /* Constant.swift in Sources */,

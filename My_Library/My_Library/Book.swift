@@ -11,4 +11,5 @@ struct Book {
     var sender: String
     var bookName: String
     var author: String
+    var idString : String
 }
